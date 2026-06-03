@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  clients   Client[]
+}
+
+model Client {
+  id             String    @id @default(cuid())
+  name           String
+  projectTitle   String    @default("General Project")
+  phone          String
+  email          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  dueDate        DateTime?
+  deploymentDate DateTime?
+  progress       Int       @default(0)   // 0–100
+  status         String    @default("not_started") 
+                           // not_started | in_progress | ready | delayed | deployed
+  notes          Note[]
+  createdBy      String
+  user           User      @relation(fields: [createdBy], references: [id])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
