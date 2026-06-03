@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { registerSchema } from "@/lib/validations";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   // Check authorization - only existing admins can register new users
